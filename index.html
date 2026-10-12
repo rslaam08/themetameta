@@ -3,7 +3,7 @@
 <title>The Meta Meta Meta ... Puzzle</title>
 <style>
 :root{color-scheme:light;font-family:Arial,Helvetica,sans-serif;color:#20212a;background:#fffefa}*{box-sizing:border-box}
-body{margin:0}main{max-width:1080px;padding:0 24px 85px;margin:0 auto}header{text-align:center;padding-top:18px;margin-bottom:32px}h1{font-size:36px;color:#33467f;margin:0 0 20px;font-weight:700;letter-spacing:-.8px}
+body{margin:0}main{max-width:1080px;padding:0 24px 85px;margin:0 auto}header{text-align:center;padding-top:18px;margin-bottom:32px}h1{font-size:36px;color:#33467f;margin:0 0 20px;font-weight:700;letter-spacing:-.8px}.flavor{color:#858895;font-style:italic;font-size:15px;margin:-8px 0 0}
 
 a,.navlink{color:#23367e;text-decoration:underline;cursor:pointer}a:hover,.navlink:hover{color:#9b405c}.navline{display:flex;gap:12px;flex-wrap:wrap;margin:0 0 7px;font-size:15px;align-items:center}.navline button{border:0;background:none;padding:0;color:#263c88;text-decoration:underline;font:inherit;cursor:pointer}.navline #resetProgress{margin-left:auto;color:#9b405c}
 .heading{display:flex;align-items:center;gap:16px;color:#a83e5b;margin-bottom:28px}.heading h2{font-size:21px;margin:0;white-space:nowrap;font-weight:600}.heading .rule{height:2px;flex:1;background:#b34562}
@@ -11,7 +11,7 @@ a,.navlink{color:#23367e;text-decoration:underline;cursor:pointer}a:hover,.navli
 ul.feeders{margin:29px 0 0;padding-left:26px}ul.feeders li{padding:8px 0;font-size:16px;line-height:1.5;overflow-wrap:anywhere}.answer{font-size:15px;color:#111}.answer.blurred{filter:blur(5px);user-select:none}.answer.blurred:hover{filter:blur(3px)}.answer.hidden{color:#6d7193;font-style:italic}
 .summary{font-size:13px;color:#676c79;margin-top:20px}.more{margin-top:14px;background:#f9f9fa;border:1px solid #c9cbd1;color:#263c88;border-radius:3px;padding:8px 15px;cursor:pointer}.more:hover{background:#f1f3f8}.matrix{display:inline-grid;grid-template-columns:repeat(2,max-content);column-gap:12px;row-gap:2px;position:relative;vertical-align:middle;padding:2px 10px;margin:0 3px;font-family:Georgia,'Times New Roman',serif;font-variant-numeric:tabular-nums;line-height:1.15;text-align:center}.matrix::before,.matrix::after{content:'';position:absolute;top:0;bottom:0;width:5px;border-top:1.5px solid currentColor;border-bottom:1.5px solid currentColor}.matrix::before{left:0;border-left:1.5px solid currentColor}.matrix::after{right:0;border-right:1.5px solid currentColor}.matrix .cell{min-width:1.4em;text-align:center}.matrix-link{display:inline-flex;align-items:center;gap:2px;vertical-align:middle}.matrix-link .matrix{font-size:15px}.heading .matrix{font-size:19px;color:#a83e5b}.matrix-prefix{vertical-align:middle}.feeders a:has(.matrix){text-decoration:none}.feeders a:has(.matrix):hover{opacity:.7}.feeder-separator{margin-left:4px}.currentid{font-weight:600}.tiny{font-size:12px;color:#777}.target-tag{font-size:.78em;font-weight:normal;color:#94637b}.zero-answer{font-size:16px;color:#20212a;font-weight:600;white-space:nowrap}.meta-clue{margin:22px 0 2px;font-size:15px;line-height:1.9;color:#303244}.meta-clue .equation{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:5px;color:#263c88;font-weight:600}.meta-clue .matrix{font-size:14px}
 @media(max-width:600px){main{padding:0 15px 60px}h1{font-size:27px}.heading h2{font-size:19px}.entry button{min-width:76px}.feeders li{font-size:15px}}
-</style></head><body><main><header><h1>The Meta Meta Meta ... Puzzle</h1></header>
+</style></head><body><main><header><h1>The Meta Meta Meta ... Puzzle</h1><p class="flavor">"계속 반복되는 이곳에서 벗어나야만 해.."</p></header>
 <div class="navline"><button id="back">← Back</button><button id="resetProgress" type="button">Reset progress</button></div>
 <div class="heading"><h2 id="puzzleTitle">Puzzle 0</h2><div class="rule"></div></div>
 
@@ -30,7 +30,7 @@ const WORDS=JSON.parse(document.getElementById('dictionary').textContent);
 const $=id=>document.getElementById(id);
 const ROOTS='ABCDEFG';
 const SEVEN_WORDS=WORDS.filter(w=>/^[a-z]{7}$/.test(w));
-const META_ANSWERS={"0":"EMPTILY","A":"DIZZIED","B":"MERRELL","C":"OPINION","D":"CATCALL","E":"REVIVER","F":"SETTLES","G":"BARBARY"};
+const META_VERIFIERS={"0":{"salt":"d5e077af2b59cf1194156c918dd275b5","digest":"3554b5a4ab31db627ecc97a9099157cffd3879e671d56d7d0b7f4d431cf779dd"},"A":{"salt":"f636c6d698839f931ed155bb77ae752f","digest":"b2ca0179ef361b4e5821814a5da03a8ce55e5ca8ef10a41311e4e20b0f0dda46"},"B":{"salt":"dd4b4008ff6e9f11a1a7749edb0aaa97","digest":"1e218a74f1da2d1d0f17972513750b113e21fb3cd829fa5a860f2561bc14ca44"},"C":{"salt":"e4c70e2330a2cd5b9371ace5ded73a88","digest":"5a14007e812af672bfe3a838aa3c18729034afd9f4642c9f503a5a347cd2532b"},"D":{"salt":"c1b81c196f1ba2170ebba00bc65e7637","digest":"13d342623f93cf1cf028083162148588d8844364d1590d1837febb8d777358f3"},"E":{"salt":"89dc0b488100806afbf749be66c8ca5a","digest":"409e9688e5b7393300540ad6b8d6ec27bc1524efd69d935cf63cc138a7338eda"},"F":{"salt":"120adf93046ad3997cd216a9c61d9bc8","digest":"01a3b36e028741614c7785ed36b09cbd17806406d4d29963872193a05c0f09a6"},"G":{"salt":"2250c342fe5269693d54254a438578d3","digest":"9d112b8b0d90e279f1285d5c0932eb2ad49277a7d8b0e1eaf67abab2b75eea07"}};
 const TARGETS={"A:10":{"tag":"A-a","answer":"MIXTURE"},"A:100":{"tag":"A-b","answer":"GLIMPSE"},"A:1000":{"tag":"A-c","answer":"IMMENSE"},"A:10000":{"tag":"A-d","answer":"HEALING"},"A:100000":{"tag":"A-e","answer":"ADMIRER"},"B:23":{"tag":"B-a","answer":"DIVIDED"},"B:36":{"tag":"B-b","answer":"WHIRLED"},"B:118":{"tag":"B-c","answer":"DETAILS"},"B:600":{"tag":"B-d","answer":"MASTIFF"},"B:7007":{"tag":"B-e","answer":"CORDERO"},"C:16":{"tag":"C-a","answer":"ERRATIC"},"C:32":{"tag":"C-b","answer":"EXAMPLE"},"C:256":{"tag":"C-c","answer":"PRESSED"},"C:1024":{"tag":"C-d","answer":"FRAMERS"},"C:8192":{"tag":"C-e","answer":"PHRASES"},"D:5/8":{"tag":"D-a","answer":"APPEARS"},"D:22/7":{"tag":"D-b","answer":"AMUSING"},"D:101/18":{"tag":"D-c","answer":"POUCHES"},"D:233/144":{"tag":"D-d","answer":"PERFECT"},"D:2026/1231":{"tag":"D-e","answer":"BUNDLES"},"E:-2,5;-3,7":{"tag":"E-a","answer":"GILLIES"},"E:29,-8;40,-11":{"tag":"E-b","answer":"ASSUMES"},"E:199,-55;275,-76":{"tag":"E-c","answer":"INVADED"},"E:668,-153;1157,-265":{"tag":"E-d","answer":"PLAGUED"},"E:505,-22;528,-23":{"tag":"E-e","answer":"RUBBISH"},"F:-5,1":{"tag":"F-a","answer":"ESSENCE"},"F:-6,0,1":{"tag":"F-b","answer":"GARMENT"},"F:-3,7,-2":{"tag":"F-c","answer":"PHYSICS"},"F:88,-126,62,-13,1":{"tag":"F-d","answer":"FANCIED"},"F:-1,8660,-11541,6477,-1933,321,-28,1":{"tag":"F-e","answer":"SINNING"},"G:10":{"tag":"G-a","answer":"FREIGHT"},"G:13":{"tag":"G-b","answer":"DRAWING"},"G:21":{"tag":"G-c","answer":"COSTUME"},"G:23":{"tag":"G-d","answer":"CHEAPLY"},"G:27":{"tag":"G-e","answer":"SLURRED"}};
 const normalize=n=>({t:String(n.t||'0').toUpperCase(),id:String(n.id??'')});
 const root=t=>({t,id:t==='E'?'1,0;0,1':t==='F'?'0':t==='D'?'1/1':'1'});
@@ -71,8 +71,6 @@ function matrixElement(id){let el=document.createElement('span');el.className='m
 function displayIdentifier(parent,n,withPuzzle=true){if(n.t==='E'&&n.id!==''){let pre=document.createElement('span');pre.className='matrix-prefix';pre.textContent=withPuzzle?'Puzzle E-':'E-';parent.append(pre,matrixElement(n.id))}else{parent.append(document.createTextNode(withPuzzle?'Puzzle '+short(n) : short(n)))}}
 function validFormat(n){try{if(n.t==='0'||n.id==='')return true;if(['A','B','C','G'].includes(n.t))return /^\d+$/.test(n.id)&&BigInt(n.id)>0n;if(n.t==='D'){let [a,b]=n.id.split('/').map(bint);return a>0n&&b>0n&&gcd(a,b)===1n}if(n.t==='E')return matParse(n.id).length===4;if(n.t==='F'){fparse(n.id);return true}}catch(e){}return false}
 function hashWord(n){
- if(n.t==='0')return META_ANSWERS['0'];
- if(n.id==='')return META_ANSWERS[n.t];
  const target=TARGETS[n.t+':'+n.id];if(target)return target.answer;
  let s=n.t+':'+n.id,h=2166136261;
  for(let i=0;i<s.length;i++)h=Math.imul(h^s.charCodeAt(i),16777619);
@@ -80,10 +78,17 @@ function hashWord(n){
  return SEVEN_WORDS[(h>>>0)%SEVEN_WORDS.length].toUpperCase();
 }
 function feederTag(n){let found=TARGETS[n.t+':'+n.id];return found?found.tag:''}
-const SOLVED_STORAGE='meta-meta-solved-v2';
+const SOLVED_STORAGE='meta-meta-solved-v3';
 let solved={};try{let saved=JSON.parse(localStorage.getItem(SOLVED_STORAGE)||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved))solved=saved}catch(e){}
 const puzzleKey=n=>JSON.stringify([n.t,n.id]);
-function markSolved(n){solved[puzzleKey(n)]=true;try{localStorage.setItem(SOLVED_STORAGE,JSON.stringify(solved))}catch(e){}}
+function markSolved(n,answer){solved[puzzleKey(n)]=answer;try{localStorage.setItem(SOLVED_STORAGE,JSON.stringify(solved))}catch(e){}}
+async function verifyMeta(n,guess){
+ const key=n.t==='0'?'0':n.t;const verifier=META_VERIFIERS[key];if(!verifier||!crypto.subtle)return false;
+ const bytes=new TextEncoder().encode(key+':'+verifier.salt+':'+guess);
+ const hash=await crypto.subtle.digest('SHA-256',bytes);
+ const hex=Array.from(new Uint8Array(hash),v=>v.toString(16).padStart(2,'0')).join('');
+ return hex===verifier.digest;
+}
 let current={t:'0',id:''},historyStack=[],visible=60;
 function jump(n,record=true){n=canonical(n);if(!validFormat(n)){setAlert('Invalid puzzle identifier.');return}if(record)historyStack.push(current);current=n;visible=60;render()}
 function setAlert(msg){$('alert').textContent=msg||''}
@@ -91,7 +96,7 @@ function render(){setAlert('');$('puzzleTitle').replaceChildren();displayIdentif
 
  const isMeta=(current.t==='0'||current.id==='');
  const solvedMeta=!!solved[puzzleKey(current)];
- $('solvedStatus').textContent=(!isMeta||solvedMeta)?'Answer = '+hashWord(current):'';
+ $('solvedStatus').textContent=(!isMeta||solvedMeta)?'Answer = '+(isMeta?solved[puzzleKey(current)]:hashWord(current)):'';
  const clue=$('metaClue');clue.replaceChildren();clue.hidden=!(current.id===''&&current.t!=='0');
  if(!clue.hidden){
    const line=document.createElement('div');line.textContent='Add the following answers as 7-digit base-36 numbers. Keep the last 7 digits of the sum (mod 36⁷).';clue.append(line);
@@ -105,17 +110,23 @@ function render(){setAlert('');$('puzzleTitle').replaceChildren();displayIdentif
  $('answerInput').value='';
  $('answerInput').placeholder=isMeta?'Enter answer':'Already solved';
  let kids=[];try{kids=children(current)}catch(e){setAlert('Could not generate feeders: '+e.message)}
- $('feeders').replaceChildren();let shown=kids.slice(0,visible);shown.forEach((n,i)=>{let li=document.createElement('li'),a=document.createElement('a');a.href='#';displayIdentifier(a,n,true);a.addEventListener('click',e=>{e.preventDefault();jump(n)});li.append(a);if(n.id!=='' || (current.t==='0' && solved[puzzleKey(n)])){let ans=document.createElement('span');ans.className='answer';ans.textContent=': '+hashWord(n);li.append(ans)}$('feeders').append(li)});
+ $('feeders').replaceChildren();let shown=kids.slice(0,visible);shown.forEach((n,i)=>{let li=document.createElement('li'),a=document.createElement('a');a.href='#';displayIdentifier(a,n,true);a.addEventListener('click',e=>{e.preventDefault();jump(n)});li.append(a);if(n.id!=='' || (current.t==='0' && solved[puzzleKey(n)])){let ans=document.createElement('span');ans.className='answer';ans.textContent=': '+(n.id===''?solved[puzzleKey(n)]:hashWord(n));li.append(ans)}$('feeders').append(li)});
  $('more').hidden=kids.length<=visible;$('more').textContent=`More (${kids.length-visible})`;
  }
-$('answerForm').addEventListener('submit',e=>{
+$('answerForm').addEventListener('submit',async e=>{
  e.preventDefault();
  if(!(current.t==='0'||current.id===''))return;
  const guess=$('answerInput').value.trim().replace(/\s+/g,'').toUpperCase();
  if(!guess){setAlert('Enter an answer.');return;}
- if(guess===hashWord(current).replace(/\s+/g,'')){
-   markSolved(current);render();setAlert('Correct!');
- }else setAlert('Incorrect answer.');
+ const submittedNode={...current};
+ const submittedPuzzle=puzzleKey(submittedNode);
+ const button=$('guessButton');button.disabled=true;
+ try{
+   const correct=await verifyMeta(submittedNode,guess);
+   if(correct){markSolved(submittedNode,guess);if(puzzleKey(current)===submittedPuzzle){render();setAlert('Correct!')}}
+   else if(puzzleKey(current)===submittedPuzzle)setAlert('Incorrect answer.');
+ }catch(err){if(puzzleKey(current)===submittedPuzzle)setAlert('Could not verify the answer in this browser.');}
+ finally{if(puzzleKey(current)===submittedPuzzle)button.disabled=false;}
 });
 $('back').onclick=()=>{if(historyStack.length){let n=historyStack.pop();jump(n,false)}};
 $('resetProgress').onclick=()=>{

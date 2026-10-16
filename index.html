@@ -31,7 +31,7 @@ const $=id=>document.getElementById(id);
 const ROOTS='ABCDEFG';
 const SEVEN_WORDS=WORDS.filter(w=>/^[a-z]{7}$/.test(w));
 const META_VERIFIERS={"0":{"salt":"d5e077af2b59cf1194156c918dd275b5","digest":"3554b5a4ab31db627ecc97a9099157cffd3879e671d56d7d0b7f4d431cf779dd"},"A":{"salt":"f636c6d698839f931ed155bb77ae752f","digest":"b2ca0179ef361b4e5821814a5da03a8ce55e5ca8ef10a41311e4e20b0f0dda46"},"B":{"salt":"dd4b4008ff6e9f11a1a7749edb0aaa97","digest":"1e218a74f1da2d1d0f17972513750b113e21fb3cd829fa5a860f2561bc14ca44"},"C":{"salt":"e4c70e2330a2cd5b9371ace5ded73a88","digest":"5a14007e812af672bfe3a838aa3c18729034afd9f4642c9f503a5a347cd2532b"},"D":{"salt":"c1b81c196f1ba2170ebba00bc65e7637","digest":"13d342623f93cf1cf028083162148588d8844364d1590d1837febb8d777358f3"},"E":{"salt":"89dc0b488100806afbf749be66c8ca5a","digest":"409e9688e5b7393300540ad6b8d6ec27bc1524efd69d935cf63cc138a7338eda"},"F":{"salt":"120adf93046ad3997cd216a9c61d9bc8","digest":"01a3b36e028741614c7785ed36b09cbd17806406d4d29963872193a05c0f09a6"},"G":{"salt":"2250c342fe5269693d54254a438578d3","digest":"9d112b8b0d90e279f1285d5c0932eb2ad49277a7d8b0e1eaf67abab2b75eea07"}};
-const TARGETS={"A:100000":{"tag":"A-e","answer":"DIZZIED"},"B:7007":{"tag":"B-e","answer":"MERRELL"},"C:8192":{"tag":"C-e","answer":"OPINION"},"D:2026/1231":{"tag":"D-e","answer":"CATCALL"},"E:505,-22;528,-23":{"tag":"E-e","answer":"REVIVER"},"F:-360,342,241,-324,118,-18,1":{"tag":"F-e","answer":"SETTLES"},"G:27":{"tag":"G-e","answer":"BARBARY"}};
+const TARGETS={"A:100000":{"tag":"A-e","answer":"DIZZIED"},"B:7007":{"tag":"B-e","answer":"MERRELL"},"C:2304":{"tag":"C-e","answer":"OPINION"},"D:2026/1231":{"tag":"D-e","answer":"CATCALL"},"E:256,74695/256;0,1/256":{"tag":"E-e","answer":"REVIVER"},"F:-360,342,241,-324,118,-18,1":{"tag":"F-e","answer":"SETTLES"},"G:27":{"tag":"G-e","answer":"BARBARY"}};
 const normalize=n=>({t:String(n.t||'0').toUpperCase(),id:String(n.id??'')});
 const root=t=>({t,id:t==='E'?'1,0;0,1':t==='F'?'0':t==='D'?'1/1':'1'});
 const meta=t=>({t,id:''});
@@ -45,6 +45,34 @@ function pcSum(n){if(n<=0n)return 0n;let result=0n;while(n>0n){let p=1n;let k=0n
 function matParse(s){let m=s.split(';').map(v=>v.split(',').map(v=>BigInt(v.trim())));if(m.length!==2||m.some(v=>v.length!==2))throw Error('Use a,b;c,d');return [m[0][0],m[0][1],m[1][0],m[1][1]]}
 const ms=a=>a[0]+','+a[1]+';'+a[2]+','+a[3];
 const mul=(a,b)=>[a[0]*b[0]+a[1]*b[2],a[0]*b[1]+a[1]*b[3],a[2]*b[0]+a[3]*b[2],a[2]*b[1]+a[3]*b[3]];
+
+// E: rational upper-triangular matrices, encoded as a,b;c,d.
+// M(k,n) = [[2^k,n/2^k],[0,1/2^k]], with allowed digits 0..4
+// for even n and 1..3 for odd n.
+function eFraction(v){
+ const parts=String(v).trim().split('/');
+ if(parts.length>2||!parts.every(x=>/^-?\d+$/.test(x)))throw Error('Invalid rational entry');
+ const num=BigInt(parts[0]),den=parts.length===2?BigInt(parts[1]):1n;
+ if(den<=0n)throw Error('Denominator must be positive');
+ return [num,den];
+}
+function eNumberEqual(v,num,den){let [p,q]=eFraction(v);return p*den===num*q}
+function eState(id){
+ let rows=String(id).split(';').map(r=>r.split(',').map(x=>x.trim()));
+ if(rows.length!==2||rows.some(r=>r.length!==2))throw Error('Use a,b;c,d');
+ const [a,b]=rows[0], [c,d]=rows[1];
+ let [p,q]=eFraction(a);
+ if(q!==1n||p<1n||p&(p-1n))throw Error('Top-left entry must be a power of 2');
+ let k=0,base=p;while(base>1n){base>>=1n;k++}
+ if(!eNumberEqual(c,0n,1n)||!eNumberEqual(d,1n,p))throw Error('E requires determinant 1 and lower-left entry 0');
+ let [bn,bd]=eFraction(b);let nn=bn*p;
+ if(nn%bd!==0n)throw Error('Invalid top-right entry');
+ let n=nn/bd;
+ if(n<0n)throw Error('E requires a nonnegative top-right entry');
+ return {k,n};
+}
+function eReduced(num,den){if(num===0n)return '0';let g=gcd(num,den);num/=g;den/=g;return den===1n?String(num):num+'/'+den}
+function eId(k,n){let p=1n<<BigInt(k);return p+','+eReduced(n,p)+';0,'+eReduced(1n,p)}
 const EQ=(a,b)=>a.every((v,i)=>v===b[i]);const I=[1n,0n,0n,1n];const EA=[0n,1n,-1n,2n],EB=[3n,-1n,4n,-1n];
 function sqrtBig(n){if(n<0n)return null;if(n<2n)return n;let x=1n<<BigInt(Math.ceil(n.toString(2).length/2));while(true){let y=(x+n/x)>>1n;if(y>=x)return x;x=y}}
 function isSquareMatrix(m){const t=sqrtBig(m[0]+m[3]+2n);if(t===null||t===0n||t*t!==m[0]+m[3]+2n)return false;const v=[m[0]+1n,m[1],m[2],m[3]+1n];if(v.some(z=>z%t!==0n))return false;let r=v.map(z=>z/t);return EQ(mul(r,r),m)}
@@ -58,18 +86,21 @@ function children(node){let t=node.t,id=node.id;if(t==='0')return [...ROOTS].map
  if(t==='B'){let n=bint(id);if(n<1n)throw Error('Positive integer required');if(n===1n)return [{t,id:'2'}];let p=largestPrimeFactor(n),q=nextPrime(p);return [n*p,n/p*q].map(x=>({t,id:x.toString()}))}
  if(t==='C'){let n=bint(id);if(n<1n)throw Error('Positive integer required');let k=pc(n),start=2n+pcSum(n);return Array.from({length:k},(_,i)=>({t,id:String(start+BigInt(i))}))}
  if(t==='D'){let [a,b]=id.split('/').map(bint);if(a<=0n||b<=0n||gcd(a,b)!==1n)throw Error('Use a positive reduced fraction a/b');return [{t,id:a+'/'+(a+b)},{t,id:(a+b)+'/'+b}]}
- if(t==='E'){let m=matParse(id),out=[];if(EQ(m,I))return [EA,EB].map(v=>({t,id:ms(v)}));if(m[0]*m[3]-m[1]*m[2]!==1n)throw Error('Determinant must be 1');let candidates=[mul(m,m),mul(m,EA),mul(m,EB)];return candidates.filter((v,i)=>i===0||!isSquareMatrix(v)).map(v=>({t,id:ms(v)}))}
+ if(t==='E'){
+  let {k,n}=eState(id), digits=n%2n===0n?[0n,1n,2n,3n,4n]:[1n,2n,3n];
+  return digits.map(j=>({t,id:eId(k+1,4n*n+j)}));
+ }
  if(t==='F'){let v=fparse(id);if(!v.length)return [{t,id:'1'},{t,id:'-1'}];let d=BigInt(v.length-1),z=fval(v,d);let out=[fs(fspecial(v))];if(z>=0n){let a=v.slice();a[0]+=1n;out.push(fs(a))}if(z<=0n){let a=v.slice();a[0]-=1n;out.push(fs(a))}return out.map(id=>({t,id}))}
  if(t==='G'){let n=bint(id);if(n<1n)throw Error('Positive integer required');let a=[2n*n];if(n>4n&&n%6n===4n)a.push((n-1n)/3n);return a.map(x=>({t,id:String(x)}))}
  throw Error('Unknown puzzle type')}
 function fLabel(id){let v=fparse(String(id));return '('+(v.length?v.join(', '):'0')+')'}
-function canonical(n){n=normalize(n);if(n.t==='F'&&n.id!==''){try{n.id=fs(fparse(n.id))}catch(e){}}return n}
+function canonical(n){n=normalize(n);if(n.t==='F'&&n.id!==''){try{n.id=fs(fparse(n.id))}catch(e){}}if(n.t==='E'&&n.id!==''){try{let p=eState(n.id);n.id=eId(p.k,p.n)}catch(e){}}return n}
 function title(n){if(n.t==='0')return 'Puzzle 0';if(n.id==='')return 'Puzzle '+n.t;if(n.t==='F')return 'Puzzle F-'+fLabel(n.id);if(n.t==='E')return 'Puzzle E-';return 'Puzzle '+n.t+'-'+n.id}
 function short(n){return n.t==='0'?'0':n.id===''?n.t:n.t+'-'+(n.t==='F'?fLabel(n.id):n.id)}
 function label(n){return n.t==='0'?'Main puzzle':(n.t==='F'?fLabel(n.id):n.id)}
-function matrixElement(id){let el=document.createElement('span');el.className='matrix';el.setAttribute('aria-label', 'matrix '+id);let values=String(id).split(/[;,]/);for(let j=0;j<4;j++){let cell=document.createElement('span');cell.className='cell';cell.textContent=(values[j]??'?').trim();el.append(cell)}return el}
+function matrixElement(id){let el=document.createElement('span');el.className='matrix';el.setAttribute('aria-label', 'matrix '+id);let values=String(id).split(/[;,]/);for(let j=0;j<4;j++){let cell=document.createElement('span');cell.className='cell';let raw=(values[j]??'?').trim();try{let [num,den]=eFraction(raw);cell.textContent=eReduced(num,den)}catch(e){cell.textContent=raw}el.append(cell)}return el}
 function displayIdentifier(parent,n,withPuzzle=true){if(n.t==='E'&&n.id!==''){let pre=document.createElement('span');pre.className='matrix-prefix';pre.textContent=withPuzzle?'Puzzle E-':'E-';parent.append(pre,matrixElement(n.id))}else{parent.append(document.createTextNode(withPuzzle?'Puzzle '+short(n) : short(n)))}}
-function validFormat(n){try{if(n.t==='0'||n.id==='')return true;if(['A','B','C','G'].includes(n.t))return /^\d+$/.test(n.id)&&BigInt(n.id)>0n;if(n.t==='D'){let [a,b]=n.id.split('/').map(bint);return a>0n&&b>0n&&gcd(a,b)===1n}if(n.t==='E')return matParse(n.id).length===4;if(n.t==='F'){fparse(n.id);return true}}catch(e){}return false}
+function validFormat(n){try{if(n.t==='0'||n.id==='')return true;if(['A','B','C','G'].includes(n.t))return /^\d+$/.test(n.id)&&BigInt(n.id)>0n;if(n.t==='D'){let [a,b]=n.id.split('/').map(bint);return a>0n&&b>0n&&gcd(a,b)===1n}if(n.t==='E'){eState(n.id);return true;}if(n.t==='F'){fparse(n.id);return true}}catch(e){}return false}
 function hashWord(n){
  const target=TARGETS[n.t+':'+n.id];if(target)return target.answer;
  let s=n.t+':'+n.id,h=2166136261;
